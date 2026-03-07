@@ -1,3 +1,6 @@
-# REFERÊNCIAS
-
-Lista de referências utilizadas e citadas no trabalho.
+KIM, H.; CHOI, H. Why Does Netflix Syndrome Occur: A Study on the Effect of Content Choice Deferral on Stress. Asian Journal for Public Opinion Research, v. 13, n. 2, 2025. Disponível em: https://www.ajpor.org/article/129993. Acesso em: mar. 2026.
+KURNIAWAN, Hans Hendersen; LUKMAN, William Susanto; FREDYAN, Renaldy; IBRAHIM, Muhammad Amien. Movie Recommendation System: A Comparison of Content-Based and Collaborative Filtering. Procedia Computer Science, v. 245, p. 860–868, 2024. DOI: 10.1016/j.procs.2024.10.244.
+NIELSEN. How Much Time Do Viewers Spend Choosing What to Watch? Nielsen Insights, 2020. Disponível em: https://www.nielsen.com/insights/2020/how-much-time-do-viewers-spend-choosing-what-to-watch. Acesso em: mar. 2026.
+NIELSEN. State of Play: A Nielsen Report on Streaming. Nielsen Insights, 2022. Disponível em: https://techcrunch.com/2022/04/06/nielsen-report-shows-the-frustration-of-streaming-service-market-fragmentation-and-users-desire-for-bundling. Acesso em: mar. 2026.
+ROMERO MEZA, L.; D'URSO, G. User's Dilemma: A Qualitative Study on the Influence of Netflix Recommender Systems on Choice Overload. Psychological Studies, 2024. DOI: 10.1007/s12646-024-00807-0.
+SCHWARTZ, Barry. The Paradox of Choice: Why More Is Less. New York: Ecco Press, 2004.

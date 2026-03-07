@@ -1,4 +1,4 @@
-# Título do Projeto
+# CineMatch - Recomendação de filmes e séries.
 
 `CURSO: Sistemas de Informação`
 
@@ -6,11 +6,14 @@
 
 `SEMESTRE: 3º`
 
-Descrever resumidamente, em um ou dois parágrafos, o projeto que está sendo desenvolvido.
+O CineMatch é um sistema web de gestão e descoberta de conteúdo audiovisual que permite aos usuários buscar, avaliar e organizar filmes e séries em um único espaço centralizado. A plataforma oferece funcionalidades de cadastro de avaliações, criação de listas de títulos que o usuário deseja assistir e geração de recomendações personalizadas baseadas no histórico de preferências de cada usuário.
+
+O sistema utilizará a API pública do The Movie Database (TMDB) como fonte de dados, dispensando o cadastro manual de títulos e garantindo acesso a um catálogo amplo e atualizado de filmes e séries. As recomendações são geradas por filtragem baseada em conteúdo, sugerindo títulos com características semelhantes aos mais bem avaliados pelo próprio usuário.
+
 
 ## Integrantes
 
-* Nome completo do aluno 1
+* Vinicius Santos Pacheco Pereira
 * Nome completo do aluno 2
 * Nome completo do aluno 3
 * Nome completo do aluno 4
@@ -19,7 +22,7 @@ Descrever resumidamente, em um ou dois parágrafos, o projeto que está sendo de
 
 ## Orientador
 
-* Nome completo do professor 
+*  Fábio Martins de Oliveira
 
 # Planejamento
 
