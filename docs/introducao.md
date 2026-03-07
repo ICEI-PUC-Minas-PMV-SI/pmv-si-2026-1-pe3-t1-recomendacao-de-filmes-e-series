@@ -21,7 +21,7 @@ Este trabalho tem como objetivo geral desenvolver um sistema web que auxilie os 
 
 ## 1.3. Justificativa
 
-O streaming consolidou-se como o principal meio de consumo audiovisual para milhões de pessoas ao redor do mundo, tornando a experiência de escolha e organização de conteúdo uma necessidade cotidiana relevante. A multiplicação de plataformas e títulos, no entanto, não veio acompanhada de ferramentas adequadas para que o usuário gerencie seu próprio consumo de forma centralizada e personalizada (NIELSEN, 2022).
+O streaming consolidou-se como o principal meio de consumo audiovisual para milhões de pessoas ao redor do mundo, tornando a experiência de escolha e organização de conteúdo uma necessidade cotidiana relevante. A multiplicação de plataformas e títulos, no entanto, não veio acompanhada de ferramentas adequadas para que o usuário gerencie seu próprio consumo de forma centralizada e personalizada.
 
 Tendo esses pontos em vista, o CineMatch será um aliado para quem busca mais praticidade e personalização no consumo de filmes e séries. A proposta é oferecer um espaço centralizado onde o usuário possa registrar suas avaliações, organizar listas de interesse e receber recomendações baseadas no seu próprio gosto.
 
