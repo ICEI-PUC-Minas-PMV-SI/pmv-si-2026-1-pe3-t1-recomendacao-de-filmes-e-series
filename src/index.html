@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>CineMatch</title>
+  <meta http-equiv="refresh" content="0; url=login.html">
+  <script src="js/state.js"></script>
+  <script>
+    // Se já autenticado, vai pra home; senão login
+    try {
+      const raw = localStorage.getItem('cinematch_state_v1');
+      const s = raw ? JSON.parse(raw) : null;
+      window.location.replace(s?.user ? 'home.html' : 'login.html');
+    } catch {
+      window.location.replace('login.html');
+    }
+  </script>
+</head>
+<body>
+  <p>Redirecionando…</p>
+</body>
+</html>

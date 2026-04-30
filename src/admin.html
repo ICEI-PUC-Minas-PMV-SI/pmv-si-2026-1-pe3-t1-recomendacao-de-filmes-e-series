@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin | CineMatch</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+
+<main>
+  <div class="container">
+    <div class="page" id="page"></div>
+  </div>
+</main>
+
+<script src="js/data.js"></script>
+<script src="js/state.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/nav.js"></script>
+<script>
+  Nav.mount('admin');
+  if (!Auth.requireAdmin()) throw new Error('not admin');
+
+  let filterText = '';
+  let filterStatus = 'all'; // all | active | blocked
+
+  function render() {
+    const all = State.get().users;
+    const filtered = all.filter(u => {
+      if (filterStatus === 'active' && u.blocked) return false;
+      if (filterStatus === 'blocked' && !u.blocked) return false;
+      if (filterText && !`${u.name} ${u.email}`.toLowerCase().includes(filterText.toLowerCase())) return false;
+      return true;
+    });
+
+    const counts = {
+      all: all.length,
+      active: all.filter(u => !u.blocked).length,
+      blocked: all.filter(u => u.blocked).length
+    };
+
+    document.getElementById('page').innerHTML = `
+      <header class="page-header">
+        <div class="page-greeting">
+          <span class="eyebrow">Painel administrativo  ·  Gerenciamento de usuários</span>
+          <h1 class="page-title-display">Usuários da<br><em>plataforma</em></h1>
+        </div>
+      </header>
+
+      <div style="display:flex;gap:var(--gap-5);align-items:center;flex-wrap:wrap;margin-bottom:var(--gap-5);">
+        <div class="tabs" style="margin:0;border-bottom:none;">
+          <button class="tab ${filterStatus === 'all' ? 'active' : ''}" data-status="all">Todos (${counts.all})</button>
+          <button class="tab ${filterStatus === 'active' ? 'active' : ''}" data-status="active">Ativos (${counts.active})</button>
+          <button class="tab ${filterStatus === 'blocked' ? 'active' : ''}" data-status="blocked">Bloqueados (${counts.blocked})</button>
+        </div>
+        <input type="text" id="searchInput" placeholder="Buscar por nome ou e-mail..." value="${UI.escape(filterText)}"
+          style="margin-left:auto;padding:10px 16px;background:var(--ink-2);border:1px solid var(--ink-4);border-radius:var(--r-pill);color:var(--paper);font-family:var(--font-body);font-size:13px;width:280px;">
+      </div>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th style="width:30%;">Usuário</th>
+            <th style="width:30%;">E-mail</th>
+            <th style="width:12%;">Papel</th>
+            <th style="width:13%;">Avaliações</th>
+            <th style="width:10%;">Status</th>
+            <th style="width:5%;text-align:right;">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${filtered.length === 0 ? `
+            <tr><td colspan="6" style="text-align:center;padding:var(--gap-7);color:var(--paper-mute);font-style:italic;">Nenhum usuário corresponde aos filtros.</td></tr>
+          ` : filtered.map(u => `
+            <tr>
+              <td class="name-cell">${UI.escape(u.name)}</td>
+              <td style="font-family:var(--font-mono);font-size:12px;color:var(--paper-soft);">${UI.escape(u.email)}</td>
+              <td><span class="badge ${u.role === 'admin' ? 'badge-admin' : ''}" style="${u.role !== 'admin' ? 'background:var(--ink-3);color:var(--paper-mute);border:1px solid var(--ink-4);' : ''}">${u.role === 'admin' ? 'Admin' : 'Usuário'}</span></td>
+              <td style="font-family:var(--font-mono);color:var(--paper);">${u.ratings}</td>
+              <td><span class="badge ${u.blocked ? 'badge-blocked' : 'badge-active'}">${u.blocked ? 'Bloqueado' : 'Ativo'}</span></td>
+              <td style="text-align:right;">
+                <button class="btn btn-sm ${u.blocked ? 'btn-secondary' : 'btn-danger'}" data-toggle="${u.id}">
+                  ${u.blocked ? 'Desbloquear' : 'Bloquear'}
+                </button>
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+
+      <p style="margin-top:var(--gap-5);font-family:var(--font-mono);font-size:11px;color:var(--paper-mute);text-transform:uppercase;letter-spacing:0.12em;">
+        ${filtered.length} de ${counts.all} usuários listados
+      </p>
+    `;
+
+    bindActions();
+  }
+
+  function bindActions() {
+    document.querySelectorAll('[data-status]').forEach(btn => {
+      btn.addEventListener('click', () => { filterStatus = btn.dataset.status; render(); });
+    });
+
+    const search = document.getElementById('searchInput');
+    search.addEventListener('input', (e) => {
+      filterText = e.target.value;
+      render();
+      // Restaurar foco e cursor
+      const newSearch = document.getElementById('searchInput');
+      newSearch.focus();
+      newSearch.setSelectionRange(filterText.length, filterText.length);
+    });
+
+    document.querySelectorAll('[data-toggle]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const userId = btn.dataset.toggle;
+        const u = State.get().users.find(x => x.id === userId);
+        const wasBlocked = u.blocked;
+        State.toggleBlockUser(userId);
+        UI.toast(
+          `${u.name} ${wasBlocked ? 'desbloqueado' : 'bloqueado'} com sucesso`,
+          {
+            action: 'Desfazer',
+            onAction: () => { State.toggleBlockUser(userId); render(); }
+          }
+        );
+        render();
+      });
+    });
+  }
+
+  render();
+</script>
+</body>
+</html>

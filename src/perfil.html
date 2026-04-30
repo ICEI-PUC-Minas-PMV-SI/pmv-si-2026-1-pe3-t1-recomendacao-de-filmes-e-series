@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perfil | CineMatch</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+
+<main>
+  <div class="container">
+    <div class="page" id="page"></div>
+  </div>
+</main>
+
+<script src="js/data.js"></script>
+<script src="js/state.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/nav.js"></script>
+<script>
+  Nav.mount(null);
+
+  function render() {
+    const user = State.get().user;
+    const stats = {
+      ratings: Object.keys(State.get().ratings).length,
+      watch: State.get().watchlist.length,
+      favs: State.get().favorites.length
+    };
+
+    document.getElementById('page').innerHTML = `
+      <header class="page-header">
+        <div class="page-greeting">
+          <span class="eyebrow">Sua conta  ·  Identidade e dados</span>
+          <h1 class="page-title-display">Meu <em>perfil</em></h1>
+        </div>
+      </header>
+
+      <div class="profile-grid">
+        <aside class="profile-sidebar">
+          <div class="profile-avatar-lg">${UI.initials(user.name)}</div>
+          <div class="profile-name">${UI.escape(user.name)}</div>
+          <div class="profile-email">${UI.escape(user.email)}</div>
+          ${user.role === 'admin'
+            ? `<span class="badge badge-admin" style="margin-top:var(--gap-3);display:inline-block;">Administrador</span>`
+            : ''}
+          <div class="profile-stats">
+            <div>
+              <div class="profile-stat-value">${stats.ratings}</div>
+              <div class="profile-stat-label">Avaliações</div>
+            </div>
+            <div>
+              <div class="profile-stat-value">${stats.watch}</div>
+              <div class="profile-stat-label">Watchlist</div>
+            </div>
+            <div>
+              <div class="profile-stat-value">${stats.favs}</div>
+              <div class="profile-stat-label">Favoritos</div>
+            </div>
+          </div>
+        </aside>
+
+        <section class="profile-content">
+          <div class="section-header">
+            <span class="section-num">Nº 01</span>
+            <h2>Dados pessoais</h2>
+            <span class="section-tag">Editáveis</span>
+          </div>
+
+          <form id="profileForm" style="max-width:520px;">
+            <div class="field">
+              <label for="name">Nome completo</label>
+              <input type="text" id="name" value="${UI.escape(user.name)}" required>
+            </div>
+
+            <div class="field">
+              <label for="email">E-mail</label>
+              <input type="email" id="email" value="${UI.escape(user.email)}" required>
+            </div>
+
+            <div class="field">
+              <label for="password">Nova senha</label>
+              <input type="password" id="password" placeholder="Deixe em branco para manter a atual">
+              <div class="field-help">Mínimo 6 caracteres se for alterar.</div>
+            </div>
+
+            <div class="modal-actions" style="margin-top:var(--gap-6);padding-top:var(--gap-5);border-top:1px solid var(--ink-4);">
+              <button type="button" class="btn btn-ghost" id="cancelBtn">Cancelar</button>
+              <button type="submit" class="btn btn-primary">Salvar alterações</button>
+            </div>
+          </form>
+
+          <div style="margin-top:var(--gap-8);padding-top:var(--gap-6);border-top:1px solid var(--ink-4);">
+            <div class="section-header">
+              <span class="section-num">Nº 02</span>
+              <h2>Atalhos</h2>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:var(--gap-3);">
+              <a href="preferencias.html" class="btn btn-secondary" style="justify-content:flex-start;padding:var(--gap-4);">
+                <span style="display:flex;flex-direction:column;align-items:flex-start;gap:2px;">
+                  <span style="font-family:var(--font-display);font-style:italic;font-size:16px;font-weight:500;">Gêneros</span>
+                  <span style="font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:0.14em;color:var(--paper-mute);">Editar preferências</span>
+                </span>
+              </a>
+              <a href="historico.html" class="btn btn-secondary" style="justify-content:flex-start;padding:var(--gap-4);">
+                <span style="display:flex;flex-direction:column;align-items:flex-start;gap:2px;">
+                  <span style="font-family:var(--font-display);font-style:italic;font-size:16px;font-weight:500;">Histórico</span>
+                  <span style="font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:0.14em;color:var(--paper-mute);">Tudo que assistiu</span>
+                </span>
+              </a>
+              <a href="watchlist.html" class="btn btn-secondary" style="justify-content:flex-start;padding:var(--gap-4);">
+                <span style="display:flex;flex-direction:column;align-items:flex-start;gap:2px;">
+                  <span style="font-family:var(--font-display);font-style:italic;font-size:16px;font-weight:500;">Watchlist</span>
+                  <span style="font-family:var(--font-mono);font-size:10px;text-transform:uppercase;letter-spacing:0.14em;color:var(--paper-mute);">Para depois</span>
+                </span>
+              </a>
+            </div>
+          </div>
+        </section>
+      </div>
+    `;
+
+    document.getElementById('profileForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      State.set(s => ({ ...s, user: { ...s.user, name, email } }));
+      UI.toast('Perfil atualizado com sucesso', { type: 'success' });
+      render();
+    });
+
+    document.getElementById('cancelBtn').addEventListener('click', () => render());
+  }
+
+  render();
+</script>
+</body>
+</html>

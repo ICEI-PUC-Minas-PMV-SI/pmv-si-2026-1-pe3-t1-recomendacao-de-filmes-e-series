@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preferências | CineMatch</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+
+<main>
+  <div class="container">
+    <div class="page" id="page"></div>
+  </div>
+</main>
+
+<script src="js/data.js"></script>
+<script src="js/state.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/nav.js"></script>
+<script>
+  Nav.mount(null);
+
+  const _GENRES = window.CINEMATCH_DATA.GENRES;
+  let selected = new Set(State.get().user.genres || []);
+
+  function render() {
+    document.getElementById('page').innerHTML = `
+      <header class="page-header">
+        <div class="page-greeting">
+          <span class="eyebrow">Sintonia fina  ·  O que você curte</span>
+          <h1 class="page-title-display">Preferências<br>de <em>gênero</em></h1>
+          <p class="lead" style="max-width:580px;margin-top:var(--gap-3);">
+            Selecione no mínimo 3 gêneros. Eles influenciam diretamente as recomendações que você recebe quando ainda não tem muitas avaliações.
+          </p>
+        </div>
+      </header>
+
+      <div style="max-width:780px;background:var(--ink-2);border:1px solid var(--ink-4);border-radius:var(--r-lg);padding:var(--gap-6);">
+
+        <div class="genre-counter ${selected.size >= 3 ? 'met' : ''}" style="margin-bottom:var(--gap-5);">
+          <span>Selecionados:</span>
+          <strong id="counter">${selected.size}</strong>
+          <span>/ mínimo 3</span>
+          <span style="margin-left:auto;color:${selected.size >= 3 ? 'var(--moss)' : 'var(--paper-mute)'};">
+            ${selected.size >= 3 ? '✓ pronto para salvar' : `faltam ${3 - selected.size}`}
+          </span>
+        </div>
+
+        <div class="genre-grid" id="grid">
+          ${_GENRES.map(g => `
+            <button type="button" class="genre-chip ${selected.has(g) ? 'selected' : ''}" data-genre="${g}">
+              ${UI.cap(g)}
+            </button>
+          `).join('')}
+        </div>
+
+        <div class="modal-actions" style="border-top:1px solid var(--ink-4);padding-top:var(--gap-5);margin-top:var(--gap-6);">
+          <button class="btn btn-ghost" id="resetBtn">Restaurar</button>
+          <button class="btn btn-primary" id="saveBtn" ${selected.size < 3 ? 'disabled' : ''}>Salvar preferências</button>
+        </div>
+      </div>
+
+      <div style="margin-top:var(--gap-7);padding:var(--gap-5);background:var(--ink-2);border-left:2px solid var(--amber);border-radius:0 var(--r-md) var(--r-md) 0;max-width:780px;">
+        <div class="modal-eyebrow">Por que isso importa</div>
+        <p class="text-soft" style="font-size:14px;line-height:1.6;margin-top:8px;">
+          Enquanto você não tem 5 avaliações, suas recomendações vêm de gêneros preferidos (<em>cold start</em>). Depois disso, o histórico de avaliações ganha peso aos poucos, até substituir totalmente as preferências.
+        </p>
+      </div>
+    `;
+
+    bindActions();
+  }
+
+  function bindActions() {
+    document.getElementById('grid').addEventListener('click', (e) => {
+      const chip = e.target.closest('.genre-chip');
+      if (!chip) return;
+      const g = chip.dataset.genre;
+      if (selected.has(g)) selected.delete(g); else selected.add(g);
+      render();
+    });
+
+    document.getElementById('saveBtn').addEventListener('click', () => {
+      if (selected.size < 3) return;
+      State.setUserGenres(Array.from(selected));
+      UI.toast(`Suas preferências foram atualizadas (${selected.size} gêneros)`, { type: 'success' });
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      selected = new Set(State.get().user.genres || []);
+      render();
+    });
+  }
+
+  render();
+</script>
+</body>
+</html>

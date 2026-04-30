@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Entrar | CineMatch</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+
+<main class="auth-screen">
+
+  <!-- Lado editorial: poster wall com citação -->
+  <aside class="auth-screen-art">
+    <div class="auth-poster-wall" id="posterWall"></div>
+    <div class="auth-art-overlay"></div>
+
+    <div class="auth-art-content">
+      <div class="auth-art-top">
+        <span class="logo">Cine<span>Match</span></span>
+      </div>
+
+      <div class="auth-art-quote">
+        <p class="display">
+          Cada noite, <em>um filme</em>.<br>
+          Cada filme, <em>uma noite</em>.
+        </p>
+        <p class="auth-art-attribution">Manifesto do espectador  ·  est. 2026</p>
+      </div>
+
+      <div class="auth-art-bottom">
+        <span>Nº 001 / Sessão</span>
+        <span>São Paulo  ·  BR</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Form -->
+  <section class="auth-screen-form">
+    <div class="auth-form-inner">
+      <div class="auth-eyebrow">Entrada / Sessão Privada</div>
+      <h1 class="auth-title">Bom <em>te ver</em><br>de volta.</h1>
+      <p class="auth-subtitle">Acesse sua conta e continue de onde parou. Suas avaliações esperam por você.</p>
+
+      <form id="loginForm" novalidate>
+        <div class="field">
+          <label for="email">E-mail</label>
+          <input type="email" id="email" required autocomplete="email" placeholder="seu@email.com">
+        </div>
+
+        <div class="field">
+          <label for="password">Senha</label>
+          <input type="password" id="password" required autocomplete="current-password" placeholder="••••••••">
+        </div>
+
+        <div class="field-error-msg" id="loginError" style="display:none"></div>
+
+        <button type="submit" class="btn btn-primary btn-block btn-lg">Entrar na sessão</button>
+      </form>
+
+      <p class="auth-footer">Primeira vez? <a href="onboarding.html">Crie sua conta</a></p>
+
+      <div class="auth-demo">
+        <strong>Contas de demonstração</strong>
+        lucas@cinematch.com  ·  lucas123  <span style="color:var(--paper-mute)">(cinéfilo)</span><br>
+        patricia@cinematch.com  ·  patri123  <span style="color:var(--paper-mute)">(casual)</span><br>
+        admin@cinematch.com  ·  admin123  <span style="color:var(--paper-mute)">(admin)</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="js/data.js"></script>
+<script src="js/state.js"></script>
+<script src="js/auth.js"></script>
+<script>
+  // Construir poster wall (12 posters de filmes do mock data)
+  const wall = document.getElementById('posterWall');
+  const sample = window.CINEMATCH_DATA.TITLES.slice(0, 12);
+  wall.innerHTML = sample.map(t => `<div style="background-image:url('${t.poster}')"></div>`).join('');
+
+  // Login handler
+  document.getElementById('loginForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const result = Auth.login(email, password);
+    const errEl = document.getElementById('loginError');
+    if (result.ok) {
+      window.location.href = 'home.html';
+    } else {
+      errEl.textContent = result.error;
+      errEl.style.display = 'block';
+    }
+  });
+
+  // Pre-redirect se já logado
+  if (State.isAuthenticated()) window.location.href = 'home.html';
+</script>
+</body>
+</html>

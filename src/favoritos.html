@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Favoritos | CineMatch</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+
+<main>
+  <div class="container">
+    <div class="page" id="page"></div>
+  </div>
+</main>
+
+<script src="js/data.js"></script>
+<script src="js/state.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/nav.js"></script>
+<script>
+  Nav.mount('favoritos');
+
+  function render() {
+    const ids = State.get().favorites;
+    const titles = ids.map(id => window.CINEMATCH_DATA.TITLES_BY_ID[id]).filter(Boolean);
+
+    document.getElementById('page').innerHTML = `
+      <header class="page-header">
+        <div class="page-greeting">
+          <span class="eyebrow">Sua coleção  ·  Os melhores</span>
+          <h1 class="page-title-display"><em>Favoritos</em></h1>
+          <p class="lead" style="max-width:540px;margin-top:var(--gap-3);">
+            ${titles.length === 0
+              ? 'Reúna aqui os títulos que você ama. Use o coração na ficha para adicionar.'
+              : `${titles.length} ${titles.length === 1 ? 'obra que marcou' : 'obras que marcaram'} sua jornada.`}
+          </p>
+        </div>
+      </header>
+
+      ${titles.length === 0 ? `
+        <div class="empty-state">
+          <div class="empty-state-icon">♡</div>
+          <div class="empty-state-title">Sem favoritos ainda.</div>
+          <div class="empty-state-subtitle">Clique no coração na ficha de qualquer título para começar.</div>
+          <a href="home.html" class="btn btn-primary btn-lg">Voltar para o início</a>
+        </div>
+      ` : `
+        <div class="grid-titles" id="grid"></div>
+      `}
+    `;
+
+    if (titles.length) {
+      const grid = document.getElementById('grid');
+      grid.innerHTML = titles.map(t => `
+        <div class="title-card" style="position:relative;">
+          <a href="detalhes.html?id=${t.id}" style="display:block;">
+            <div class="poster">
+              <div class="poster-fallback">${UI.escape(t.title)}</div>
+              <img src="${t.poster}" alt="${UI.escape(t.title)}" onerror="this.style.display='none'">
+            </div>
+            <div class="title-card-body">
+              <div class="title-card-title">${UI.escape(t.title)}</div>
+              <div class="title-card-meta">
+                <span>${t.year}</span><span>·</span>
+                <span>${t.type}</span>
+                <span class="title-card-rating">★ ${t.avgRating.toFixed(1)}</span>
+              </div>
+            </div>
+          </a>
+          <button class="btn btn-ghost btn-sm" data-remove="${t.id}"
+            style="position:absolute;top:8px;right:8px;background:rgba(16,13,9,0.85);backdrop-filter:blur(8px);padding:5px 10px;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;font-family:var(--font-mono);">
+            Remover
+          </button>
+        </div>
+      `).join('');
+
+      grid.querySelectorAll('[data-remove]').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const id = Number(btn.dataset.remove);
+          const t = window.CINEMATCH_DATA.TITLES_BY_ID[id];
+          State.toggleFavorite(id);
+          UI.toast(`${t.title} removido dos favoritos`, {
+            action: 'Desfazer',
+            onAction: () => { State.toggleFavorite(id); render(); }
+          });
+          render();
+        });
+      });
+    }
+  }
+
+  render();
+</script>
+</body>
+</html>

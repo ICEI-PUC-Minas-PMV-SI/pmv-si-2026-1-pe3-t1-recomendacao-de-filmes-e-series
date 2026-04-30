@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Início | CineMatch</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+
+<main>
+  <div class="container">
+    <div class="page" id="page"></div>
+  </div>
+</main>
+
+<script src="js/data.js"></script>
+<script src="js/state.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/recommend.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/nav.js"></script>
+<script>
+  Nav.mount('home');
+
+  const user = State.get().user;
+  const strategy = Recommend.currentStrategy();
+  const ratingsCount = Object.keys(State.get().ratings).length;
+
+  // Hora do dia para saudação
+  const h = new Date().getHours();
+  const greeting = h < 6 ? 'Boa madrugada' : h < 12 ? 'Bom dia' : h < 18 ? 'Boa tarde' : 'Boa noite';
+  const firstName = user.name.split(' ')[0];
+
+  // Featured: top do ranking
+  const featured = Recommend.forUser(1)[0] || window.CINEMATCH_DATA.TITLES[0];
+
+  // Recomendações principais
+  const main = Recommend.forUser(12);
+
+  // Linhas temáticas alinhadas aos gêneros do usuário (até 2)
+  const userGenres = user.genres || [];
+  const themeRows = userGenres.slice(0, 2).map(g => ({
+    genre: g,
+    titles: Recommend.byGenre(g, 10)
+  })).filter(r => r.titles.length > 0);
+
+  // Trending fallback row
+  const trending = Recommend.trending(10);
+
+  const strategyTag = {
+    'cold-start': 'Cold start  ·  baseado em seus gêneros',
+    'cold-start-with-ratings': 'Cold start  ·  baseado em seus gêneros',
+    'transition': 'Transição  ·  histórico + gêneros',
+    'history-based': 'Histórico  ·  baseado nas suas avaliações'
+  }[strategy];
+
+  document.getElementById('page').innerHTML = `
+    <header class="page-header">
+      <div class="page-greeting">
+        <span class="eyebrow">${greeting}, espectador  ·  Sessão de hoje</span>
+        <h1 class="page-title-display">${greeting},<br><em>${UI.escape(firstName)}</em>.</h1>
+      </div>
+    </header>
+
+    <!-- Featured -->
+    <article class="featured">
+      <div class="featured-backdrop" style="background-image:url('${featured.poster}')"></div>
+      <div class="featured-overlay"></div>
+      <div class="featured-content">
+        <div class="featured-eyebrow">Em destaque para você</div>
+        <h2 class="featured-title">${UI.escape(featured.title)}</h2>
+        <div class="featured-meta">
+          <span>${featured.year}</span>
+          <span class="dot">●</span>
+          <span>${featured.type === 'filme' ? featured.duration + ' min' : featured.duration + ' temporadas'}</span>
+          <span class="dot">●</span>
+          <span>★ ${featured.avgRating.toFixed(1)}</span>
+          <span class="dot">●</span>
+          <span>${featured.genres.slice(0,2).join(' · ')}</span>
+        </div>
+        <p class="featured-synopsis">${UI.escape(featured.synopsis)}</p>
+        <div class="featured-actions">
+          <a href="detalhes.html?id=${featured.id}" class="btn btn-primary btn-lg">Ver ficha</a>
+          <button class="btn btn-secondary btn-lg" id="featuredAddWatch">+ Watchlist</button>
+        </div>
+      </div>
+    </article>
+
+    <!-- Recomendações principais -->
+    <section class="section">
+      <div class="section-header">
+        <span class="section-num">Nº 01</span>
+        <h2>Para sua sessão</h2>
+        <span class="section-tag">${strategyTag}</span>
+      </div>
+      <div class="grid-titles" id="mainRecs"></div>
+    </section>
+
+    ${themeRows.map((row, i) => `
+      <section class="section">
+        <div class="section-header">
+          <span class="section-num">Nº 0${i + 2}</span>
+          <h2>${UI.cap(row.genre)}, do seu agrado</h2>
+          <span class="section-tag">${row.titles.length} títulos</span>
+        </div>
+        <div class="row-titles" id="row-${row.genre}"></div>
+      </section>
+    `).join('')}
+
+    <section class="section">
+      <div class="section-header">
+        <span class="section-num">Nº 0${themeRows.length + 2}</span>
+        <h2>Em alta na crítica</h2>
+        <span class="section-tag">Mais bem avaliados</span>
+      </div>
+      <div class="row-titles" id="trendingRow"></div>
+    </section>
+  `;
+
+  // Render
+  UI.renderGrid(document.getElementById('mainRecs'), main);
+  themeRows.forEach(row => {
+    UI.renderRow(document.getElementById('row-' + row.genre), row.titles);
+  });
+  UI.renderRow(document.getElementById('trendingRow'), trending);
+
+  // Featured: add watchlist
+  document.getElementById('featuredAddWatch').addEventListener('click', () => {
+    const status = State.toggleWatchlist(featured.id);
+    UI.toast(`${featured.title} adicionado à watchlist`, {
+      action: 'Desfazer',
+      onAction: () => State.toggleWatchlist(featured.id)
+    });
+  });
+</script>
+</body>
+</html>
