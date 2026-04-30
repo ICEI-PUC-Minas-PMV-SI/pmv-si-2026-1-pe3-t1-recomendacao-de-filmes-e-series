@@ -46,10 +46,10 @@ O CineMatch não realiza streaming de conteúdo audiovisual. O sistema não vend
 | RF9 | Gerenciar Avaliação | Processamento de Inclusão, Alteração e Exclusão de avaliação (nota de 1 a 5 estrelas) de um título |
 | RF10 | Gerar Recomendações por Preferências | Gerar lista de títulos recomendados com base nos gêneros preferidos do usuário, voltado para usuários novos ou com poucas avaliações (cold start) |
 | RF11 | Gerar Recomendações por Avaliações | Gerar lista de títulos recomendados com base no histórico de avaliações do usuário, priorizando características (gêneros, tipo, ano) dos títulos bem avaliados (4-5 estrelas) e reduzindo peso dos mal avaliados (1-2 estrelas), utilizando filtragem baseada em conteúdo |
-| RF12 | Gerenciar Watchlist | Processamento de Inclusão, Exclusão e Consulta de títulos na lista de "quero assistir" do usuário |
-| RF13 | Gerenciar Favoritos | Processamento de Inclusão, Exclusão e Consulta de títulos marcados como favoritos pelo usuário |
-| RF14 | Gerenciar Histórico de Assistidos | Registro automático dos títulos avaliados pelo usuário como assistidos, com possibilidade de Consulta e Exclusão |
-| RF15 | Gerenciar Usuários | Processamento de Consulta e Bloqueio de usuários pelo Administrador do sistema |
+| RF12 | Gerenciar Watchlist | Processamento de Inclusão, Consulta e Exclusão de títulos na lista de "quero assistir" do usuário. A operação de Alteração não se aplica, pois cada item é uma associação simples entre usuário e título, sem atributos editáveis (modificações no conteúdo da lista são feitas via Inclusão/Exclusão). |
+| RF13 | Gerenciar Favoritos | Processamento de Inclusão, Consulta e Exclusão de títulos marcados como favoritos pelo usuário. A operação de Alteração não se aplica, pois cada item é uma associação simples entre usuário e título, sem atributos editáveis. |
+| RF14 | Gerenciar Histórico de Assistidos | Registro automático dos títulos avaliados pelo usuário como assistidos, com possibilidade de Consulta e Exclusão. As operações de Inclusão e Alteração não se aplicam ao usuário, pois o registro é criado automaticamente pelo Sistema ao gravar uma avaliação. |
+| RF15 | Gerenciar Usuários | Processamento de Consulta, Bloqueio e Desbloqueio de usuários pelo Administrador do sistema. As operações de Inclusão e Exclusão de usuários não se aplicam ao Administrador (Inclusão é feita via auto-cadastro do Usuário Comum em RF1; remoções são tratadas via Bloqueio para preservar histórico de avaliações). |
 | RF16 | Visualizar Disponibilidade em Plataformas | Exibir na tela de detalhes do título em quais plataformas de streaming ele está disponível (para assistir, alugar ou comprar), com link para a plataforma correspondente, utilizando os dados de Watch Providers da API do TMDB |
 
 ### 3.3.2 Requisitos Não Funcionais
@@ -79,34 +79,37 @@ Características dos usuários:
 
 ### 3.4.1 Diagrama de Casos de Uso
 
-Como observado no diagrama de casos de uso da Figura 1, o usuário comum poderá cadastrar-se e entrar no sistema, buscar filmes e séries com filtros avançados, visualizar detalhes dos títulos e sua disponibilidade nas plataformas de streaming, avaliar títulos com nota em estrelas, receber recomendações personalizadas (por preferências de gênero ou por histórico de avaliações), gerenciar sua watchlist, favoritos, histórico de assistidos e preferências de gênero. O administrador, além de poder fazer as funções de um usuário comum, poderá gerenciar os usuários do sistema.
+Para facilitar a leitura, o diagrama de casos de uso foi dividido em duas figuras: a Figura 1a apresenta os casos de uso do **Usuário Comum** e a Figura 1b apresenta os casos de uso do **Administrador**, que herda (generalização) todas as funcionalidades do Usuário Comum e ainda possui o caso de uso exclusivo de Gerenciar Usuários.
 
-#### Figura 1: Diagrama de Casos de Uso do Sistema.
+O Usuário Comum poderá cadastrar-se e entrar no sistema, buscar filmes e séries (com filtros avançados como extensão da busca), visualizar detalhes dos títulos e sua disponibilidade nas plataformas de streaming, avaliar títulos com nota em estrelas, receber recomendações personalizadas (por preferências de gênero ou por histórico de avaliações) e gerenciar sua watchlist, favoritos, histórico de assistidos e preferências de gênero. A **API TMDB** atua como ator secundário (sistema externo), sendo consultada pelos casos de uso de busca, detalhamento, recomendações e disponibilidade em plataformas. Estão modelados os relacionamentos UML de:
+
+- **«extend»**: `Filtrar Busca Avançada` estende `Buscar Filme/Série`; `Visualizar Disponibilidade em Plataformas` estende `Visualizar Detalhes do Título` (comportamentos opcionais que ampliam um caso de uso base).
+- **Generalização**: `Administrador` herda de `Usuário Comum` (o Administrador pode executar todos os casos de uso do Usuário Comum).
+
+#### Figura 1a: Diagrama de Casos de Uso — Usuário Comum.
 
 ```mermaid
-graph TB
-    subgraph Sistema CineMatch
-        UC1([Cadastrar no Sistema])
-        UC2([Entrar no Sistema])
-        UC3([Sair do Sistema])
-        UC4([Gerenciar Perfil do Usuário])
-        UC5([Gerenciar Preferências de Gênero])
-        UC6([Buscar Filme/Série])
-        UC7([Filtrar Busca Avançada])
-        UC8([Visualizar Detalhes do Título])
-        UC9([Gerenciar Avaliação])
-        UC10([Gerar Recomendações por Preferências])
-        UC11([Gerar Recomendações por Avaliações])
-        UC12([Gerenciar Watchlist])
-        UC13([Gerenciar Favoritos])
-        UC14([Gerenciar Histórico de Assistidos])
-        UC15([Gerenciar Usuários])
-        UC16([Visualizar Disponibilidade em Plataformas])
-    end
+graph LR
+    UsuarioComum(["👤<br/>Usuário Comum"])
+    TMDB(["🌐<br/>API TMDB<br/>(sistema externo)"])
 
-    UsuarioComum([Usuario Comum])
-    Administrador([Administrador])
-    TMDB([API TMDB])
+    subgraph CineMatch["Sistema CineMatch"]
+        UC1(["Cadastrar no<br/>Sistema"])
+        UC2(["Entrar no<br/>Sistema"])
+        UC3(["Sair do<br/>Sistema"])
+        UC4(["Gerenciar Perfil<br/>do Usuário"])
+        UC5(["Gerenciar Preferências<br/>de Gênero"])
+        UC6(["Buscar<br/>Filme/Série"])
+        UC7(["Filtrar Busca<br/>Avançada"])
+        UC8(["Visualizar Detalhes<br/>do Título"])
+        UC9(["Gerenciar<br/>Avaliação"])
+        UC10(["Gerar Recomendações<br/>por Preferências"])
+        UC11(["Gerar Recomendações<br/>por Avaliações"])
+        UC12(["Gerenciar<br/>Watchlist"])
+        UC13(["Gerenciar<br/>Favoritos"])
+        UC14(["Gerenciar Histórico<br/>de Assistidos"])
+        UC16(["Visualizar Disponibilidade<br/>em Plataformas"])
+    end
 
     UsuarioComum --- UC1
     UsuarioComum --- UC2
@@ -114,7 +117,6 @@ graph TB
     UsuarioComum --- UC4
     UsuarioComum --- UC5
     UsuarioComum --- UC6
-    UsuarioComum --- UC7
     UsuarioComum --- UC8
     UsuarioComum --- UC9
     UsuarioComum --- UC10
@@ -122,18 +124,32 @@ graph TB
     UsuarioComum --- UC12
     UsuarioComum --- UC13
     UsuarioComum --- UC14
-    UsuarioComum --- UC16
 
-    Administrador --- UC2
-    Administrador --- UC3
-    Administrador --- UC15
+    UC7 -. "«extend»" .-> UC6
+    UC16 -. "«extend»" .-> UC8
 
     UC6 --- TMDB
-    UC7 --- TMDB
     UC8 --- TMDB
     UC10 --- TMDB
     UC11 --- TMDB
     UC16 --- TMDB
+```
+
+#### Figura 1b: Diagrama de Casos de Uso — Administrador.
+
+O Administrador, por meio da relação de **generalização** com o Usuário Comum, herda todos os casos de uso da Figura 1a (em especial Entrar no Sistema e Sair do Sistema) e possui adicionalmente o caso de uso exclusivo de Gerenciar Usuários.
+
+```mermaid
+graph LR
+    UsuarioComum(["👤<br/>Usuário Comum"])
+    Administrador(["👤<br/>Administrador"])
+
+    subgraph CineMatch["Sistema CineMatch"]
+        UC15(["Gerenciar<br/>Usuários"])
+    end
+
+    Administrador -. "generalização" .-> UsuarioComum
+    Administrador --- UC15
 ```
 
 ### 3.4.2 Descrições de Casos de Uso
@@ -231,7 +247,7 @@ Pós-condições: Os dados do perfil foram alterados ou apresentados na tela.
 
 #### Gerenciar Preferências de Gênero (CSU05)
 
-Sumário: O usuário comum realiza a gestão (inclusão, alteração e exclusão) dos seus gêneros preferidos, que são utilizados pelo sistema de recomendação.
+Sumário: O usuário comum realiza a gestão (inclusão, alteração e exclusão) dos seus gêneros preferidos, que são utilizados pelo sistema de recomendação. A operação de Alteração permite redefinir o conjunto inteiro de preferências em uma única ação.
 
 Ator Primário: Usuário Comum.
 
@@ -243,12 +259,17 @@ Fluxo Principal:
 
 1) O usuário comum acessa a tela de preferências de gênero.
 2) O Sistema apresenta a lista de gêneros disponíveis, com os gêneros já selecionados pelo usuário destacados.
-3) O usuário comum seleciona a operação desejada: Inclusão, Exclusão ou opta por finalizar o caso de uso.
+3) O usuário comum seleciona a operação desejada: Inclusão, Alteração, Exclusão, ou opta por finalizar o caso de uso.
 
 Fluxo Alternativo (3): Inclusão
 
 a) O usuário comum seleciona um ou mais gêneros adicionais. <br>
 b) O Sistema adiciona os gêneros às preferências do usuário e atualiza a lista.
+
+Fluxo Alternativo (3): Alteração
+
+a) O usuário comum redefine sua seleção de gêneros, marcando novos e desmarcando outros em uma única operação, e confirma. <br>
+b) O Sistema verifica se a nova seleção contém pelo menos 3 gêneros. Se sim, substitui o conjunto anterior pelo novo conjunto de preferências; caso contrário, apresenta a mensagem "Você deve manter pelo menos 3 gêneros selecionados." e retorna ao passo 2.
 
 Fluxo Alternativo (3): Exclusão
 
@@ -407,7 +428,7 @@ Pós-condições: Uma lista de títulos recomendados com base no perfil de gosto
 
 #### Gerenciar Watchlist (CSU12)
 
-Sumário: O usuário comum realiza a gestão (inclusão, exclusão e consulta) de sua lista de títulos para assistir.
+Sumário: O usuário comum realiza a gestão (inclusão, consulta e exclusão) de sua lista de títulos para assistir. **Observação:** a operação de Alteração não se aplica a este caso de uso, pois cada item da watchlist é uma associação simples entre usuário e título, sem atributos modificáveis pelo usuário; mudanças no conteúdo da lista são realizadas via Inclusão e Exclusão.
 
 Ator Primário: Usuário Comum.
 
@@ -442,7 +463,7 @@ Pós-condições: Um título foi inserido ou removido da watchlist, ou a lista f
 
 #### Gerenciar Favoritos (CSU13)
 
-Sumário: O usuário comum realiza a gestão (inclusão, exclusão e consulta) de seus títulos favoritos.
+Sumário: O usuário comum realiza a gestão (inclusão, consulta e exclusão) de seus títulos favoritos. **Observação:** a operação de Alteração não se aplica a este caso de uso, pois cada item dos favoritos é uma associação simples entre usuário e título, sem atributos modificáveis pelo usuário; mudanças no conteúdo da lista são realizadas via Inclusão e Exclusão.
 
 Ator Primário: Usuário Comum.
 
@@ -477,7 +498,7 @@ Pós-condições: Um título foi inserido ou removido dos favoritos, ou a lista 
 
 #### Gerenciar Histórico de Assistidos (CSU14)
 
-Sumário: O usuário comum consulta e gerencia seu histórico de títulos assistidos, que é alimentado automaticamente ao realizar avaliações.
+Sumário: O usuário comum consulta e gerencia seu histórico de títulos assistidos, que é alimentado automaticamente ao realizar avaliações. **Observação:** as operações de Inclusão e Alteração não se aplicam ao usuário neste caso de uso — a Inclusão é executada automaticamente pelo Sistema ao gravar uma avaliação (ver CSU09) e o registro não possui atributos editáveis pelo usuário; restam apenas Consulta e Exclusão.
 
 Ator Primário: Usuário Comum.
 
@@ -505,7 +526,7 @@ Pós-condições: O histórico de assistidos foi apresentado ou um título foi r
 
 #### Gerenciar Usuários (CSU15)
 
-Sumário: O Administrador realiza a gestão (consulta e bloqueio) dos usuários comuns.
+Sumário: O Administrador realiza a gestão (consulta, bloqueio e desbloqueio) dos usuários comuns. **Observação:** as operações de Inclusão e Exclusão de usuários não se aplicam ao Administrador — a Inclusão é feita exclusivamente via auto-cadastro do Usuário Comum (CSU01) e remoções são tratadas via Bloqueio para preservar a integridade do histórico de avaliações.
 
 Ator Primário: Administrador.
 
@@ -516,8 +537,8 @@ Pré-condições: Usuário deve estar cadastrado no sistema como Administrador.
 Fluxo Principal:
 
 1) O Administrador requisita a gestão de usuários.
-2) O Sistema apresenta as operações que podem ser realizadas: a consulta de um usuário comum e o bloqueio de um usuário comum.
-3) O Administrador seleciona a operação desejada: Consulta ou Bloqueio, ou opta por finalizar o caso de uso.
+2) O Sistema apresenta as operações que podem ser realizadas: consulta, bloqueio e desbloqueio de um usuário comum.
+3) O Administrador seleciona a operação desejada: Consulta, Bloqueio ou Desbloqueio, ou opta por finalizar o caso de uso.
 4) Se o Administrador desejar continuar com a gestão de usuários, o caso de uso retorna ao passo 2; caso contrário, o caso de uso termina.
 
 Fluxo Alternativo (3): Consulta
@@ -529,10 +550,15 @@ d) O Sistema apresenta os detalhes do usuário (nome, e-mail, data de cadastro, 
 
 Fluxo Alternativo (3): Bloqueio
 
-a) O Administrador seleciona um usuário e requisita ao Sistema que o bloqueie. <br>
-b) O Sistema realiza o bloqueio do usuário, impedindo seu acesso ao sistema.
+a) O Administrador seleciona um usuário ativo e requisita ao Sistema que o bloqueie. <br>
+b) O Sistema verifica se o usuário já está bloqueado. Se sim, apresenta a mensagem "Usuário já está bloqueado." e retorna ao passo 2; caso contrário, realiza o bloqueio do usuário, impedindo seu acesso ao sistema.
 
-Pós-condições: Um usuário foi consultado ou bloqueado.
+Fluxo Alternativo (3): Desbloqueio
+
+a) O Administrador seleciona um usuário bloqueado e requisita ao Sistema que o desbloqueie. <br>
+b) O Sistema verifica se o usuário está atualmente bloqueado. Se sim, remove o bloqueio e restaura o acesso do usuário ao sistema; caso contrário, apresenta a mensagem "Usuário não está bloqueado." e retorna ao passo 2.
+
+Pós-condições: Um usuário foi consultado, bloqueado ou desbloqueado.
 
 #### Visualizar Disponibilidade em Plataformas (CSU16)
 
@@ -575,10 +601,22 @@ Cada Avaliação deve ser realizada por um único usuário e estar vinculada a u
 
 Cada Título pode estar disponível em zero ou várias Plataformas de streaming. A classe Plataforma representa os dados obtidos do endpoint Watch Providers da API do TMDB, contendo como atributos: nome da plataforma, logo e tipo de disponibilidade (assinatura, aluguel ou compra). Esses dados são consultados em tempo real e não são persistidos localmente.
 
+**Observação sobre as classes Watchlist, Favorito e Histórico:** as três classes são entidades **independentes entre si**, sem relacionamento direto. Embora compartilhem estrutura semelhante (associando Usuário e Título com uma data), representam intenções distintas do usuário no sistema:
+
+- **Watchlist**: títulos que o usuário marcou manualmente como "quero assistir".
+- **Favorito**: títulos que o usuário marcou manualmente como preferidos.
+- **Histórico**: registro automático, criado pelo Sistema sempre que o usuário avalia um título (CSU09), representando os títulos já assistidos.
+
+A separação em três classes evita ambiguidade semântica e permite que cada lista evolua independentemente (por exemplo, um título pode estar simultaneamente na Watchlist e nos Favoritos sem estar no Histórico, caso o usuário ainda não o tenha avaliado).
+
+**Observação sobre a associação Título–Gênero:** trata-se de uma associação muitos-para-muitos no nível conceitual (um título pertence a um ou mais gêneros e um gênero classifica vários títulos). Não foi modelada uma classe de associação separada, pois a relação não possui atributos próprios — a tabela de junção pertence ao modelo físico de banco de dados, não ao modelo conceitual de classes.
+
 #### Figura 2: Diagrama de Classes do Sistema.
 
 ```mermaid
 classDiagram
+    direction LR
+
     class Usuario {
         -int id
         -String nome
@@ -591,6 +629,32 @@ classDiagram
         +login()
         +logout()
         +editarPerfil()
+    }
+
+    class PreferenciaGenero {
+        -int id
+        -Date dataSelecao
+    }
+
+    class Watchlist {
+        -int id
+        -Date dataAdicao
+    }
+
+    class Favorito {
+        -int id
+        -Date dataAdicao
+    }
+
+    class Historico {
+        -int id
+        -Date dataRegistro
+    }
+
+    class Avaliacao {
+        -int id
+        -int nota
+        -Date data
     }
 
     class Titulo {
@@ -611,37 +675,6 @@ classDiagram
         -String nome
     }
 
-    class Avaliacao {
-        -int id
-        -int nota
-        -Date data
-    }
-
-    class Watchlist {
-        -int id
-        -Date dataAdicao
-    }
-
-    class Favorito {
-        -int id
-        -Date dataAdicao
-    }
-
-    class Historico {
-        -int id
-        -Date dataRegistro
-    }
-
-    class PreferenciaGenero {
-        -int idUsuario
-        -int idGenero
-    }
-
-    class TituloGenero {
-        -int idTitulo
-        -int idGenero
-    }
-
     class Plataforma {
         -int idTmdb
         -String nome
@@ -650,21 +683,19 @@ classDiagram
         -String link
     }
 
-    Usuario "1" --> "0..*" Avaliacao : realiza
-    Usuario "1" --> "0..*" Watchlist : possui
-    Usuario "1" --> "0..*" Favorito : possui
-    Usuario "1" --> "0..*" Historico : possui
     Usuario "1" --> "3..*" PreferenciaGenero : seleciona
+    Usuario "1" --> "0..*" Watchlist : mantém
+    Usuario "1" --> "0..*" Favorito : marca
+    Usuario "1" --> "0..*" Historico : possui
+    Usuario "1" --> "0..*" Avaliacao : realiza
 
-    Titulo "1" --> "0..*" Avaliacao : recebe
     Titulo "1" --> "0..*" Watchlist : está em
     Titulo "1" --> "0..*" Favorito : está em
     Titulo "1" --> "0..*" Historico : está em
-
-    Titulo "1..*" -- "1..*" Genero : TituloGenero
+    Titulo "1" --> "0..*" Avaliacao : recebe
 
     PreferenciaGenero "0..*" --> "1" Genero : refere-se a
-
+    Titulo "1..*" -- "1..*" Genero : classifica
     Titulo "1" --> "0..*" Plataforma : disponível em
 ```
 
@@ -680,5 +711,4 @@ classDiagram
 | 6 | Favorito | Gerenciar dados relativos à lista de títulos marcados como favoritos pelo usuário. É uma classe intermediária entre Usuario e Titulo. |
 | 7 | Historico | Registrar os títulos que o usuário já assistiu, alimentado automaticamente ao realizar uma avaliação. É uma classe intermediária entre Usuario e Titulo. |
 | 8 | PreferenciaGenero | Registrar os gêneros preferidos do usuário, selecionados no onboarding e editáveis a qualquer momento. É uma classe intermediária entre Usuario e Genero. Utilizada no mecanismo de recomendação por preferências (cold start). |
-| 9 | TituloGenero | Registrar as associações entre Títulos e Gêneros. É uma classe intermediária entre as classes Titulo e Genero. |
-| 10 | Plataforma | Representar as plataformas de streaming onde um título está disponível (para assistir, alugar ou comprar). Dados obtidos em tempo real do endpoint Watch Providers da API do TMDB, sem persistência local. |
+| 9 | Plataforma | Representar as plataformas de streaming onde um título está disponível (para assistir, alugar ou comprar). Dados obtidos em tempo real do endpoint Watch Providers da API do TMDB, sem persistência local. |
