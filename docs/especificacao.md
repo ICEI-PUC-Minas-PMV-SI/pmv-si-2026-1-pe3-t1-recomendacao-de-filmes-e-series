@@ -86,7 +86,7 @@ O Usuário Comum poderá cadastrar-se e entrar no sistema, buscar filmes e séri
 - **«extend»**: `Filtrar Busca Avançada` estende `Buscar Filme/Série`; `Visualizar Disponibilidade em Plataformas` estende `Visualizar Detalhes do Título` (comportamentos opcionais que ampliam um caso de uso base).
 - **Generalização**: `Administrador` herda de `Usuário Comum` (o Administrador pode executar todos os casos de uso do Usuário Comum).
 
-#### Figura 1a: Diagrama de Casos de Uso — Usuário Comum.
+#### Figura 1a: Diagrama de Casos de Uso (Usuário Comum).
 
 ```mermaid
 graph LR
@@ -135,7 +135,7 @@ graph LR
     UC16 --- TMDB
 ```
 
-#### Figura 1b: Diagrama de Casos de Uso — Administrador.
+#### Figura 1b: Diagrama de Casos de Uso (Administrador).
 
 O Administrador, por meio da relação de **generalização** com o Usuário Comum, herda todos os casos de uso da Figura 1a (em especial Entrar no Sistema e Sair do Sistema) e possui adicionalmente o caso de uso exclusivo de Gerenciar Usuários.
 
@@ -498,7 +498,7 @@ Pós-condições: Um título foi inserido ou removido dos favoritos, ou a lista 
 
 #### Gerenciar Histórico de Assistidos (CSU14)
 
-Sumário: O usuário comum consulta e gerencia seu histórico de títulos assistidos, que é alimentado automaticamente ao realizar avaliações. **Observação:** as operações de Inclusão e Alteração não se aplicam ao usuário neste caso de uso — a Inclusão é executada automaticamente pelo Sistema ao gravar uma avaliação (ver CSU09) e o registro não possui atributos editáveis pelo usuário; restam apenas Consulta e Exclusão.
+Sumário: O usuário comum consulta e gerencia seu histórico de títulos assistidos, que é alimentado automaticamente ao realizar avaliações. **Observação:** as operações de Inclusão e Alteração não se aplicam ao usuário neste caso de uso, pois a Inclusão é executada automaticamente pelo Sistema ao gravar uma avaliação (ver CSU09) e o registro não possui atributos editáveis pelo usuário; restam apenas Consulta e Exclusão.
 
 Ator Primário: Usuário Comum.
 
@@ -526,7 +526,7 @@ Pós-condições: O histórico de assistidos foi apresentado ou um título foi r
 
 #### Gerenciar Usuários (CSU15)
 
-Sumário: O Administrador realiza a gestão (consulta, bloqueio e desbloqueio) dos usuários comuns. **Observação:** as operações de Inclusão e Exclusão de usuários não se aplicam ao Administrador — a Inclusão é feita exclusivamente via auto-cadastro do Usuário Comum (CSU01) e remoções são tratadas via Bloqueio para preservar a integridade do histórico de avaliações.
+Sumário: O Administrador realiza a gestão (consulta, bloqueio e desbloqueio) dos usuários comuns. **Observação:** as operações de Inclusão e Exclusão de usuários não se aplicam ao Administrador, pois a Inclusão é feita exclusivamente via auto-cadastro do Usuário Comum (CSU01) e remoções são tratadas via Bloqueio para preservar a integridade do histórico de avaliações.
 
 Ator Primário: Administrador.
 
@@ -609,7 +609,7 @@ Cada Título pode estar disponível em zero ou várias Plataformas de streaming.
 
 A separação em três classes evita ambiguidade semântica e permite que cada lista evolua independentemente (por exemplo, um título pode estar simultaneamente na Watchlist e nos Favoritos sem estar no Histórico, caso o usuário ainda não o tenha avaliado).
 
-**Observação sobre a associação Título–Gênero:** trata-se de uma associação muitos-para-muitos no nível conceitual (um título pertence a um ou mais gêneros e um gênero classifica vários títulos). Não foi modelada uma classe de associação separada, pois a relação não possui atributos próprios — a tabela de junção pertence ao modelo físico de banco de dados, não ao modelo conceitual de classes.
+**Observação sobre a associação Título–Gênero:** trata-se de uma associação muitos-para-muitos no nível conceitual (um título pertence a um ou mais gêneros e um gênero classifica vários títulos). Não foi modelada uma classe de associação separada, pois a relação não possui atributos próprios; a tabela de junção pertence ao modelo físico de banco de dados, não ao modelo conceitual de classes.
 
 #### Figura 2: Diagrama de Classes do Sistema.
 
