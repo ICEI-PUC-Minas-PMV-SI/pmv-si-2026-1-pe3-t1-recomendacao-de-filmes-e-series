@@ -14,7 +14,7 @@ O sistema utilizará a API pública do The Movie Database (TMDB) como fonte de d
 ## Integrantes
 
 * Vinicius Santos Pacheco Pereira
-* Nome completo do aluno 2
+* Kelvin Cevidanes Coutinho
 * Nome completo do aluno 3
 * Nome completo do aluno 4
 * Nome completo do aluno 5
