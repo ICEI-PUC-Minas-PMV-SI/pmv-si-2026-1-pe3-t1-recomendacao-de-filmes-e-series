@@ -14,14 +14,14 @@ As personas representam usuários fictícios, baseados em traços observados no 
 
 ![Persona 2: Patrícia Souza](personas/img/screenshots/persona-2.png)
 
-### Persona 3: a definir
+### Persona 3: Marcos Almeida
 
-> **Placeholder para o(a) integrante 2 do grupo.**
-> Para preencher: copie o arquivo [`personas/persona-1.html`](personas/persona-1.html) renomeando para `persona-3.html`, edite o conteúdo (nome, idade, trabalho, personalidade, hobby, sonhos e os quatro blocos), abra no navegador, capture a tela e salve em `docs/personas/img/screenshots/persona-3.png`. Depois substitua este bloco pelo cabeçalho e pela imagem da sua persona, no mesmo formato das Personas 1 e 2.
+![Persona 3: Marcos Almeida](personas/img/screenshots/persona-3.png)
 
 ### Persona 4: a definir
 
-> **Placeholder para o(a) integrante 3 do grupo.** Mesmo procedimento da Persona 3, gerando `persona-4.html` e `persona-4.png`.
+> **Placeholder para o(a) integrante 3 do grupo.**
+> Para preencher: copie o arquivo [`personas/persona-1.html`](personas/persona-1.html) renomeando para `persona-4.html`, edite o conteúdo (nome, idade, trabalho, personalidade, hobby, sonhos e os quatro blocos), abra no navegador, capture a tela e salve em `docs/personas/img/screenshots/persona-4.png`. Depois substitua este bloco pelo cabeçalho e pela imagem da sua persona, no mesmo formato das Personas 1, 2 e 3.
 
 ### Persona 5: a definir
 
