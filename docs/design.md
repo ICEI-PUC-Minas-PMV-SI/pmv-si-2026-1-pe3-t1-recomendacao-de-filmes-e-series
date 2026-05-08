@@ -18,20 +18,17 @@ As personas representam usuários fictícios, baseados em traços observados no 
 
 ![Persona 3: Marcos Almeida](personas/img/screenshots/persona-3.png)
 
-### Persona 4: a definir
+### Persona 4: Beatriz Costa
 
-> **Placeholder para o(a) integrante 3 do grupo.**
-> Para preencher: copie o arquivo [`personas/persona-1.html`](personas/persona-1.html) renomeando para `persona-4.html`, edite o conteúdo (nome, idade, trabalho, personalidade, hobby, sonhos e os quatro blocos), abra no navegador, capture a tela e salve em `docs/personas/img/screenshots/persona-4.png`. Depois substitua este bloco pelo cabeçalho e pela imagem da sua persona, no mesmo formato das Personas 1, 2 e 3.
+![Persona 4: Beatriz Costa](personas/img/screenshots/persona-4.png)
 
-### Persona 5: a definir
+### Persona 5: Antônio Carvalho
 
-> **Placeholder para o(a) integrante 4 do grupo.** Mesmo procedimento, gerando `persona-5.html` e `persona-5.png`.
+![Persona 5: Antônio Carvalho](personas/img/screenshots/persona-5.png)
 
-### Persona 6: a definir
+### Persona 6: Renata Lima
 
-> **Placeholder para o(a) integrante 5 do grupo.** Mesmo procedimento, gerando `persona-6.html` e `persona-6.png`.
-
-> **Sugestão de perfis complementares ainda não cobertos:** estudante adolescente (consumo via dispositivo móvel, foco em recomendações sociais), idoso (baixa proficiência digital, alta sensibilidade a navegação simples), profissional ligado a cinema ou crítica (consumo profissional, uso intenso de filtros avançados), pai ou mãe de família (consumo compartilhado, controle parental implícito por gênero).
+![Persona 6: Renata Lima](personas/img/screenshots/persona-6.png)
 
 ## 4.2 Mapa de Empatia
 
@@ -47,21 +44,21 @@ O mapa de empatia complementa a persona ao detalhar o contexto emocional e compo
 
 ![Mapa de Empatia de Patrícia Souza](personas/img/screenshots/mapa-empatia-2.png)
 
-### Mapa de Empatia: persona 3 a definir
+### Mapa de Empatia: Marcos Almeida
 
-> **Placeholder para o(a) integrante 2 do grupo.** Copie [`personas/mapa-empatia-1.html`](personas/mapa-empatia-1.html) para `mapa-empatia-3.html`, ajuste o conteúdo dos sete quadrantes alinhando à sua persona, capture a tela e salve em `docs/personas/img/screenshots/mapa-empatia-3.png`.
+![Mapa de Empatia de Marcos Almeida](personas/img/screenshots/mapa-empatia-3.png)
 
-### Mapa de Empatia: persona 4 a definir
+### Mapa de Empatia: Beatriz Costa
 
-> **Placeholder para o(a) integrante 3 do grupo.** Mesmo procedimento, gerando `mapa-empatia-4.html` e `mapa-empatia-4.png`.
+![Mapa de Empatia de Beatriz Costa](personas/img/screenshots/mapa-empatia-4.png)
 
-### Mapa de Empatia: persona 5 a definir
+### Mapa de Empatia: Antônio Carvalho
 
-> **Placeholder para o(a) integrante 4 do grupo.** Mesmo procedimento, gerando `mapa-empatia-5.html` e `mapa-empatia-5.png`.
+![Mapa de Empatia de Antônio Carvalho](personas/img/screenshots/mapa-empatia-5.png)
 
-### Mapa de Empatia: persona 6 a definir
+### Mapa de Empatia: Renata Lima
 
-> **Placeholder para o(a) integrante 5 do grupo.** Mesmo procedimento, gerando `mapa-empatia-6.html` e `mapa-empatia-6.png`.
+![Mapa de Empatia de Renata Lima](personas/img/screenshots/mapa-empatia-6.png)
 
 ## 4.3 Protótipos das Interfaces
 
