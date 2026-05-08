@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalhes | CineMatch</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+
+<main>
+  <div class="container">
+    <div class="page" id="page"></div>
+  </div>
+</main>
+
+<!-- Modal de avaliação -->
+<div class="modal-backdrop" id="rateModal">
+  <div class="modal" role="dialog" aria-labelledby="rateTitle">
+    <div class="modal-header">
+      <div>
+        <div class="modal-eyebrow">Sua avaliação</div>
+        <h3 class="modal-title" id="rateTitle">Quantas estrelas?</h3>
+      </div>
+      <button class="modal-close" id="rateClose" aria-label="Fechar">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="star-picker" id="starPicker">
+        <span class="star" data-n="1">★</span>
+        <span class="star" data-n="2">★</span>
+        <span class="star" data-n="3">★</span>
+        <span class="star" data-n="4">★</span>
+        <span class="star" data-n="5">★</span>
+      </div>
+      <p class="star-picker-hint">Atalho: pressione <kbd>1</kbd> a <kbd>5</kbd></p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="rateCancel">Cancelar</button>
+      <button class="btn btn-primary" id="rateConfirm" disabled>Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/state.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/nav.js"></script>
+<script>
+  Nav.mount(null);
+
+  const id = Number(UI.qs('id') || 1);
+  const t = window.CINEMATCH_DATA.TITLES_BY_ID[id];
+  if (!t) {
+    document.getElementById('page').innerHTML = '<div class="empty-state"><div class="empty-state-icon">∅</div><div class="empty-state-title">Título não encontrado</div></div>';
+  } else {
+    render();
+  }
+
+  function render() {
+    const { PROVIDERS } = window.CINEMATCH_DATA;
+    const userRating = State.get().ratings[t.id];
+    const inWatchlist = State.get().watchlist.includes(t.id);
+    const inFavorites = State.get().favorites.includes(t.id);
+
+    const providers = (t.providers || []).map(p => {
+      const def = PROVIDERS[p];
+      if (!def) return '';
+      return `
+        <a href="${def.url}" target="_blank" class="provider-row">
+          <div class="provider-row-left">
+            <div class="provider-logo" style="background:${def.color}">${def.short}</div>
+            <div>
+              <div class="provider-row-name">${def.name}</div>
+              <div class="provider-row-type">Assinatura</div>
+            </div>
+          </div>
+          <span class="provider-arrow">↗</span>
+        </a>
+      `;
+    }).join('');
+
+    document.getElementById('page').innerHTML = `
+
+      <article class="detail-hero">
+        <div class="detail-backdrop" style="background-image:url('${t.poster}')"></div>
+        <div class="detail-hero-inner">
+          <div class="detail-poster">
+            <img src="${t.poster}" alt="${UI.escape(t.title)}" style="width:100%;height:100%;object-fit:cover;display:block;" onerror="this.parentElement.innerHTML='<div class=poster-fallback>${UI.escape(t.title)}</div>'">
+          </div>
+          <div class="detail-info">
+            <div class="detail-eyebrow">${t.type === 'filme' ? 'Longa-metragem' : 'Série / Drama serial'}</div>
+            <h1 class="detail-title">${UI.escape(t.title)}</h1>
+            <div class="detail-original">${UI.escape(t.original)}</div>
+
+            <div class="detail-meta">
+              <span class="detail-rating">★ ${t.avgRating.toFixed(1)}</span>
+              <span class="dot">●</span>
+              <span>${t.year}</span>
+              <span class="dot">●</span>
+              <span>${t.type === 'filme' ? t.duration + ' min' : t.duration + ' temporadas'}</span>
+              <span class="dot">●</span>
+              <span>${UI.escape(t.director)}</span>
+            </div>
+
+            <div class="detail-genres">
+              ${t.genres.map(g => `<span class="genre-pill">${UI.cap(g)}</span>`).join('')}
+            </div>
+
+            <p class="detail-synopsis">${UI.escape(t.synopsis)}</p>
+
+            <div class="detail-actions">
+              <button class="btn btn-primary btn-lg" id="rateBtn">
+                ${userRating ? `★ ${userRating}/5  ·  Reavaliar` : 'Avaliar'}
+              </button>
+              <button class="btn btn-secondary btn-lg" id="watchlistBtn">
+                ${inWatchlist ? '✓ Na watchlist' : '+ Watchlist'}
+              </button>
+              <button class="btn btn-secondary btn-lg" id="favoriteBtn">
+                ${inFavorites ? '♥ Favoritado' : '♡ Favoritar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <div class="detail-blocks">
+
+        <div class="detail-block">
+          <h3>Elenco e direção</h3>
+          <div class="cast-grid">
+            <div><strong>${UI.escape(t.director)}</strong>Direção</div>
+            ${t.cast.map((c, i) => `
+              <div><strong>${UI.escape(c)}</strong>${i === 0 ? 'Protagonista' : 'Elenco'}</div>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="detail-block">
+          <h3>Onde assistir</h3>
+          ${providers
+            ? `<div class="providers-list">${providers}</div>`
+            : `<p class="text-mute" style="font-style:italic;">Não disponível em nenhum streaming acompanhado.</p>`}
+        </div>
+
+      </div>
+    `;
+
+    bindActions();
+  }
+
+  function bindActions() {
+    document.getElementById('rateBtn')?.addEventListener('click', () => {
+      const current = State.get().ratings[t.id] || 0;
+      starPickerCtl.setValue(current);
+      document.getElementById('rateConfirm').disabled = current === 0;
+      UI.openModal('rateModal');
+    });
+
+    document.getElementById('watchlistBtn')?.addEventListener('click', () => {
+      const wasIn = State.get().watchlist.includes(t.id);
+      State.toggleWatchlist(t.id);
+      const msg = wasIn ? 'Removido da watchlist' : 'Adicionado à watchlist';
+      UI.toast(msg, {
+        action: 'Desfazer',
+        onAction: () => { State.toggleWatchlist(t.id); render(); }
+      });
+      render();
+    });
+
+    document.getElementById('favoriteBtn')?.addEventListener('click', () => {
+      const wasIn = State.get().favorites.includes(t.id);
+      State.toggleFavorite(t.id);
+      const msg = wasIn ? 'Removido dos favoritos' : 'Adicionado aos favoritos';
+      UI.toast(msg, {
+        action: 'Desfazer',
+        onAction: () => { State.toggleFavorite(t.id); render(); }
+      });
+      render();
+    });
+  }
+
+  // Modal de avaliação (estado persistente entre re-renders)
+  let rateValue = 0;
+  const starPickerCtl = UI.bindStarPicker(
+    document.getElementById('starPicker'),
+    (n) => {
+      rateValue = n;
+      document.getElementById('rateConfirm').disabled = n === 0;
+    }
+  );
+
+  document.getElementById('rateClose').addEventListener('click', () => UI.closeModal('rateModal'));
+  document.getElementById('rateCancel').addEventListener('click', () => UI.closeModal('rateModal'));
+  document.getElementById('rateModal').addEventListener('click', (e) => {
+    if (e.target.id === 'rateModal') UI.closeModal('rateModal');
+  });
+
+  document.getElementById('rateConfirm').addEventListener('click', () => {
+    if (rateValue === 0) return;
+    State.rate(t.id, rateValue);
+    UI.closeModal('rateModal');
+    UI.toast(`Você deu ${rateValue} ${rateValue === 1 ? 'estrela' : 'estrelas'} para ${t.title}`, { type: 'success' });
+    render();
+  });
+
+  // ESC fecha o modal
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') UI.closeModal('rateModal');
+  });
+</script>
+</body>
+</html>

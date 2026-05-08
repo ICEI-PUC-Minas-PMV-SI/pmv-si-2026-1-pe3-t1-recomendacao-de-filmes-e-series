@@ -1,0 +1,440 @@
+/* Estilo compartilhado para Personas e Mapas de Empatia do CineMatch
+   Padrão visual baseado no template TEMPERALISTA. */
+
+:root {
+  --accent: #1abc9c;
+  --text: #2c3e50;
+  --muted: #7f8c8d;
+  --bg: #ffffff;
+  --panel-bg: #f4f5f7;
+  --panel-border: #e1e4e8;
+
+  /* Cores dos post-its do mapa de empatia */
+  --pin-quem: #f5a623;
+  --pin-fazer: #7ed321;
+  --pin-ve: #4a90e2;
+  --pin-diz: #f06292;
+  --pin-faz: #a1887f;
+  --pin-escuta: #f8e71c;
+  --pin-dor: #d0021b;
+  --pin-dor-cinza: #9b9b9b;
+  --pin-ganho: #50e3c2;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  color: var(--text);
+  background: #fafafa;
+  line-height: 1.45;
+}
+
+/* =========================================================
+   CARD DA PERSONA
+   ========================================================= */
+
+.persona {
+  width: 900px;
+  background: var(--bg);
+  padding: 40px;
+  margin: 24px auto;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+.persona-header {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 28px;
+  align-items: start;
+  margin-bottom: 32px;
+}
+
+.persona-photo {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e0e0e0 0%, #cfcfcf 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 56px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.15);
+  overflow: hidden;
+}
+
+.persona-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 50%;
+}
+
+.persona-name {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text);
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--accent);
+  margin-bottom: 10px;
+}
+
+.persona-attrs {
+  font-size: 13.5px;
+  letter-spacing: 0.5px;
+  color: var(--text);
+  line-height: 1.7;
+  text-transform: uppercase;
+}
+
+.persona-attrs strong {
+  font-weight: 700;
+}
+
+.persona-body {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 28px;
+}
+
+.objetos-lugares h3,
+.persona-block h3 {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: var(--text);
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 6px;
+  margin-bottom: 14px;
+}
+
+.objetos-lugares p {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.objetos-lugares ul,
+.persona-block ul {
+  list-style: disc;
+  padding-left: 20px;
+}
+
+.objetos-lugares li,
+.persona-block li {
+  font-size: 13px;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.persona-blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  background: var(--panel-bg);
+  padding: 22px 26px;
+  border-radius: 4px;
+}
+
+.persona-block + .persona-block {
+  padding-top: 8px;
+}
+
+/* =========================================================
+   MAPA DE EMPATIA
+   ========================================================= */
+
+.empatia {
+  width: 1180px;
+  background: var(--bg);
+  margin: 24px auto;
+  padding: 0;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  border: 1px solid var(--panel-border);
+  position: relative;
+  overflow: hidden;
+}
+
+.empatia-title {
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--panel-border);
+  background: #fff;
+  position: relative;
+  z-index: 2;
+}
+
+/* Fundo com X diagonal: duas linhas se cruzando de canto a canto */
+.empatia-canvas {
+  position: relative;
+  padding: 36px 40px;
+}
+
+.empatia-canvas::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      to bottom right,
+      transparent calc(50% - 1.5px),
+      rgba(190, 196, 204, 0.75) calc(50% - 1.5px),
+      rgba(190, 196, 204, 0.75) calc(50% + 1.5px),
+      transparent calc(50% + 1.5px)
+    ),
+    linear-gradient(
+      to bottom left,
+      transparent calc(50% - 1.5px),
+      rgba(190, 196, 204, 0.75) calc(50% - 1.5px),
+      rgba(190, 196, 204, 0.75) calc(50% + 1.5px),
+      transparent calc(50% + 1.5px)
+    );
+  pointer-events: none;
+  z-index: 0;
+}
+
+.empatia-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 460px 1fr 1fr;
+  grid-template-rows: auto 1fr 1fr auto;
+  gap: 18px 14px;
+  position: relative;
+  z-index: 1;
+  min-height: 640px;
+}
+
+.quadrant {
+  padding: 0;
+  background: transparent;
+  border: none;
+  min-height: 130px;
+}
+
+.quadrant h4 {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0.3px;
+  color: #888;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quadrant h4 strong {
+  color: var(--text);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.quadrant h4 .num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid #cfd2d6;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.notes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: flex-start;
+}
+
+.note {
+  font-size: 11.5px;
+  padding: 9px 11px;
+  border-radius: 2px;
+  color: #2c3e50;
+  box-shadow: 1px 2px 3px rgba(0,0,0,0.12);
+  max-width: 135px;
+  line-height: 1.35;
+  font-weight: 500;
+}
+
+.note.quem    { background: var(--pin-quem); }
+.note.fazer   { background: var(--pin-fazer); }
+.note.ve      { background: var(--pin-ve); color: #fff; }
+.note.diz     { background: var(--pin-diz); color: #fff; }
+.note.faz     { background: var(--pin-faz); color: #fff; }
+.note.escuta  { background: var(--pin-escuta); }
+.note.dor     { background: var(--pin-dor); color: #fff; }
+.note.dor-alt { background: var(--pin-dor-cinza); color: #fff; }
+.note.ganho   { background: var(--pin-ganho); }
+
+/* Centro: cabeça com dores/ganhos dentro */
+.center {
+  grid-column: 3;
+  grid-row: 1 / span 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 0;
+  position: relative;
+}
+
+.objetivo-pill {
+  background: #ecf0f1;
+  color: var(--text);
+  padding: 8px 24px;
+  border-radius: 14px;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border: 1px solid #d6dbdf;
+}
+
+.face {
+  width: 400px;
+  min-height: 360px;
+  border: 3px solid var(--text);
+  border-radius: 200px / 190px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 22px 30px 26px;
+  background: #fff;
+}
+
+.face::after {
+  /* Orelha direita */
+  content: '';
+  position: absolute;
+  right: -22px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 56px;
+  border: 3px solid var(--text);
+  border-left: none;
+  border-radius: 0 28px 28px 0;
+  background: #fff;
+}
+
+.face-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #888;
+  text-align: center;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.face-title strong {
+  color: var(--text);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.dor-ganho-labels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+  text-align: center;
+  margin: 6px 0 14px;
+  border-bottom: 1px solid #cfd2d6;
+  padding-bottom: 8px;
+}
+
+.dor-ganho-labels span {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.dor-ganho-labels .col-dores  { color: var(--pin-dor); }
+.dor-ganho-labels .col-ganhos { color: #16a085; }
+
+.dor-ganho {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+  position: relative;
+}
+
+.dor-ganho::before {
+  /* Divisória vertical entre Dores e Ganhos */
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: #cfd2d6;
+}
+
+.dor-ganho .col-dores,
+.dor-ganho .col-ganhos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.dor-ganho .col-dores  { padding-right: 8px; }
+.dor-ganho .col-ganhos { padding-left: 8px; }
+
+.dor-ganho .note {
+  text-align: center;
+  font-size: 11px;
+  padding: 8px 8px;
+}
+
+/* Posicionamento dos quadrantes (5 colunas x 4 linhas) */
+.q-quem    { grid-column: 1 / span 2; grid-row: 1; }
+.q-fazer   { grid-column: 4 / span 2; grid-row: 1; }
+.q-escuta  { grid-column: 1 / span 2; grid-row: 2 / span 2; align-self: center; }
+.q-ve      { grid-column: 4 / span 2; grid-row: 2; align-self: center; }
+.q-diz     { grid-column: 4 / span 2; grid-row: 3; align-self: center; }
+.q-faz     { grid-column: 2 / span 3; grid-row: 4; }
+
+/* Quadrantes da direita alinham os post-its à direita */
+.q-fazer .notes,
+.q-ve .notes,
+.q-diz .notes  { justify-content: flex-end; }
+.q-fazer h4,
+.q-ve h4,
+.q-diz h4      { justify-content: flex-end; }
+
+/* FAZ na linha de baixo: alinha à esquerda */
+.q-faz .notes  { justify-content: flex-start; }
+.q-faz h4      { justify-content: flex-start; }
+
+@media print {
+  body { background: white; }
+  .persona, .empatia { box-shadow: none; margin: 0; }
+}

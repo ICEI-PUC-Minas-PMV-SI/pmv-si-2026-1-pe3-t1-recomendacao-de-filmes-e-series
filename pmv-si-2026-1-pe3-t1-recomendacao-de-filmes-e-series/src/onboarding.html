@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro | CineMatch</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/components.css">
+  <style>
+    .auth-step {
+      display: none;
+    }
+    .auth-step.active { display: block; }
+    .step-indicator {
+      display: flex;
+      gap: 6px;
+      margin-bottom: var(--gap-5);
+    }
+    .step-dot {
+      flex: 1;
+      height: 2px;
+      background: var(--ink-4);
+      transition: background 0.3s;
+    }
+    .step-dot.active { background: var(--amber); }
+    .step-dot.done { background: var(--moss); }
+  </style>
+</head>
+<body>
+
+<main class="auth-screen">
+
+  <aside class="auth-screen-art">
+    <div class="auth-poster-wall" id="posterWall"></div>
+    <div class="auth-art-overlay"></div>
+
+    <div class="auth-art-content">
+      <div class="auth-art-top">
+        <span class="logo">Cine<span>Match</span></span>
+      </div>
+
+      <div class="auth-art-quote">
+        <p class="display">
+          Conte o que você <em>ama assistir</em>.<br>
+          Vamos cuidar <em>do resto</em>.
+        </p>
+        <p class="auth-art-attribution">Onboarding  ·  duração ~ 2 min</p>
+      </div>
+
+      <div class="auth-art-bottom">
+        <span>Nº 002 / Cadastro</span>
+        <span>Estreia  ·  hoje</span>
+      </div>
+    </div>
+  </aside>
+
+  <section class="auth-screen-form">
+    <div class="auth-form-inner wide">
+      <div class="step-indicator">
+        <div class="step-dot active" id="dot-1"></div>
+        <div class="step-dot" id="dot-2"></div>
+      </div>
+
+      <!-- Etapa 1: dados básicos -->
+      <div class="auth-step active" id="step-1">
+        <div class="auth-eyebrow">Etapa 01 / Dados de acesso</div>
+        <h1 class="auth-title">Comece <em>aqui</em>.</h1>
+        <p class="auth-subtitle">Vamos criar sua conta. Levará menos tempo do que escolher um filme na noite de sábado.</p>
+
+        <form id="step1Form" novalidate>
+          <div class="field">
+            <label for="name">Nome completo</label>
+            <input type="text" id="name" required autocomplete="name" placeholder="Como prefere ser chamado">
+          </div>
+
+          <div class="field">
+            <label for="email">E-mail</label>
+            <input type="email" id="email" required autocomplete="email" placeholder="seu@email.com">
+          </div>
+
+          <div class="field">
+            <label for="password">Crie uma senha</label>
+            <input type="password" id="password" required autocomplete="new-password" placeholder="Mínimo 6 caracteres" minlength="6">
+            <div class="field-help">Use 6 ou mais caracteres com letras e números.</div>
+          </div>
+
+          <div class="field-error-msg" id="step1Error" style="display:none"></div>
+
+          <button type="submit" class="btn btn-primary btn-block btn-lg">Continuar →</button>
+        </form>
+
+        <p class="auth-footer">Já tem conta? <a href="login.html">Entrar</a></p>
+      </div>
+
+      <!-- Etapa 2: gêneros -->
+      <div class="auth-step" id="step-2">
+        <div class="auth-eyebrow">Etapa 02 / Seu gosto</div>
+        <h1 class="auth-title">O que <em>te faz</em><br>apertar play?</h1>
+        <p class="auth-subtitle">Selecione no mínimo 3 gêneros que você costuma assistir. Isso ajusta suas primeiras recomendações.</p>
+
+        <div class="genre-counter" id="genreCounter">
+          <span>Selecionados:</span>
+          <strong id="genreCount">0</strong>
+          <span>/ mínimo 3</span>
+        </div>
+
+        <div class="genre-grid" id="genreGrid"></div>
+
+        <div class="modal-actions" style="border-top:1px solid var(--ink-4); padding-top:var(--gap-5); margin-top:var(--gap-5);">
+          <button type="button" class="btn btn-ghost" id="backBtn">← Voltar</button>
+          <button type="button" class="btn btn-primary" id="finishBtn" disabled>Criar conta e entrar</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script src="js/data.js"></script>
+<script src="js/state.js"></script>
+<script src="js/auth.js"></script>
+<script>
+  // Poster wall
+  const wall = document.getElementById('posterWall');
+  wall.innerHTML = window.CINEMATCH_DATA.TITLES.slice(2, 14)
+    .map(t => `<div style="background-image:url('${t.poster}')"></div>`).join('');
+
+  // Estado do form
+  let formData = { name: '', email: '', password: '', genres: [] };
+
+  // Step 1
+  document.getElementById('step1Form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+
+    const errEl = document.getElementById('step1Error');
+    if (!name || !email || password.length < 6) {
+      errEl.textContent = 'Preencha todos os campos. Senha mínima: 6 caracteres.';
+      errEl.style.display = 'block';
+      return;
+    }
+    errEl.style.display = 'none';
+    formData = { ...formData, name, email, password };
+
+    // Avança
+    document.getElementById('step-1').classList.remove('active');
+    document.getElementById('step-2').classList.add('active');
+    document.getElementById('dot-1').classList.replace('active', 'done');
+    document.getElementById('dot-1').classList.add('done');
+    document.getElementById('dot-2').classList.add('active');
+  });
+
+  // Step 2: render genre chips
+  const grid = document.getElementById('genreGrid');
+  grid.innerHTML = window.CINEMATCH_DATA.GENRES.map(g =>
+    `<button type="button" class="genre-chip" data-genre="${g}">${UI.cap(g)}</button>`
+  ).join('');
+
+  const counter = document.getElementById('genreCounter');
+  const countEl = document.getElementById('genreCount');
+  const finishBtn = document.getElementById('finishBtn');
+
+  grid.addEventListener('click', (e) => {
+    const chip = e.target.closest('.genre-chip');
+    if (!chip) return;
+    chip.classList.toggle('selected');
+    const selected = grid.querySelectorAll('.genre-chip.selected');
+    countEl.textContent = selected.length;
+    formData.genres = Array.from(selected).map(c => c.dataset.genre);
+
+    finishBtn.disabled = selected.length < 3;
+    counter.classList.toggle('met', selected.length >= 3);
+  });
+
+  document.getElementById('backBtn').addEventListener('click', () => {
+    document.getElementById('step-2').classList.remove('active');
+    document.getElementById('step-1').classList.add('active');
+    document.getElementById('dot-2').classList.remove('active');
+    document.getElementById('dot-1').classList.add('active');
+    document.getElementById('dot-1').classList.remove('done');
+  });
+
+  finishBtn.addEventListener('click', () => {
+    const result = Auth.signup(formData);
+    if (result.ok) {
+      window.location.href = 'home.html';
+    } else {
+      alert(result.error);
+    }
+  });
+
+  // UI helper precisa estar disponível
+  if (!window.UI) window.UI = { cap: (s) => s.charAt(0).toUpperCase() + s.slice(1) };
+</script>
+</body>
+</html>

@@ -1,0 +1,247 @@
+/* ==========================================================================
+   CineMatch - Cinema Noir Editorial
+   Tipografia: Fraunces (display serif variável) + Geist (sans grotesco)
+   Paleta: warm dark (cinema theatre), accent copper-amber (luz de projetor)
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,800;0,9..144,900;1,9..144,400;1,9..144,600;1,9..144,800&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&display=swap');
+
+:root {
+  /* Base - warm noir */
+  --ink-0:        #0a0907;   /* shadow / vignette */
+  --ink-1:        #100d09;   /* page */
+  --ink-2:        #161210;   /* panel */
+  --ink-3:        #1d1813;   /* elevated */
+  --ink-4:        #2a2219;   /* border subtle */
+  --ink-5:        #3d3024;   /* border strong */
+
+  /* Paper / text */
+  --paper:        #f3ead8;   /* high-emphasis text, chamada de magazine */
+  --paper-soft:   #d5c8b0;   /* secondary text */
+  --paper-mute:   #8a7d68;   /* muted, captions */
+  --paper-dim:    #5e5443;   /* very faded */
+
+  /* Accents */
+  --amber:        #d4a574;   /* primary accent - copper/amber, luz de projetor */
+  --amber-bright: #e8bf8b;
+  --amber-deep:   #8b6332;
+  --terracotta:   #c97b54;   /* secondary accent - selected/active */
+  --crimson:      #a3413a;   /* error / blocked */
+  --moss:         #6b8e4e;   /* success */
+  --gold:         #e8b54a;   /* star ratings */
+
+  /* Provider colors (mantidas reconhecíveis) */
+  --pv-netflix:    #e50914;
+  --pv-prime:      #00a8e1;
+  --pv-disney:     #1f5fff;
+  --pv-hbo:        #a854ff;
+  --pv-apple:      #1a1a1a;
+  --pv-mubi:       #1f1f1f;
+  --pv-globoplay:  #ff414d;
+
+  /* Type scale - editorial */
+  --font-display:  'Fraunces', 'Playfair Display', Georgia, serif;
+  --font-body:     'Geist', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono:     'Geist Mono', 'JetBrains Mono', ui-monospace, monospace;
+
+  /* Type - display sizes (Fraunces optical sizing) */
+  --t-display:    clamp(48px, 6vw, 88px);
+  --t-h1:         clamp(36px, 4.2vw, 56px);
+  --t-h2:         clamp(26px, 2.6vw, 36px);
+  --t-h3:         20px;
+  --t-h4:         16px;
+
+  /* Type - body */
+  --t-lead:       17px;
+  --t-base:       14px;
+  --t-small:      12.5px;
+  --t-micro:      11px;
+
+  /* Spacing - generoso */
+  --gap-1: 4px;
+  --gap-2: 8px;
+  --gap-3: 12px;
+  --gap-4: 16px;
+  --gap-5: 24px;
+  --gap-6: 32px;
+  --gap-7: 48px;
+  --gap-8: 72px;
+  --gap-9: 112px;
+
+  /* Linhas e raios - anguloso, editorial */
+  --r-none:       0;
+  --r-sm:         2px;
+  --r-md:         4px;
+  --r-lg:         8px;
+  --r-pill:       999px;
+
+  /* Sombras - cinematic, profundas */
+  --sh-1: 0 1px 2px rgba(0,0,0,0.4);
+  --sh-2: 0 8px 24px rgba(0,0,0,0.55);
+  --sh-3: 0 24px 60px rgba(0,0,0,0.7), 0 4px 12px rgba(0,0,0,0.4);
+  --sh-glow: 0 0 0 1px rgba(212,165,116,0.2), 0 4px 16px rgba(212,165,116,0.15);
+
+  /* Layout */
+  --header-h:     72px;
+  --max-w:        1320px;
+  --rail-w:       280px;
+}
+
+/* Reset adicional, refinamento */
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: var(--t-base);
+  line-height: 1.5;
+  background: var(--ink-1);
+  color: var(--paper);
+  letter-spacing: -0.005em;
+  text-rendering: optimizeLegibility;
+  /* Film grain sutil - overlay via pseudo-elemento em <body> */
+  position: relative;
+  min-height: 100vh;
+}
+
+/* Film grain - SVG inline ruído monocromático, tom warm */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.96 0 0 0 0 0.85 0 0 0 0 0.65 0 0 0 0.5 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  mix-blend-mode: overlay;
+}
+
+/* Vinheta nas bordas - cinema theater feel */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.45) 100%);
+}
+
+/* Conteúdo acima dos overlays */
+header, main, footer, .toast-container, .modal-backdrop { position: relative; z-index: 2; }
+
+/* Tipografia editorial */
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-style: normal;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+  color: var(--paper);
+}
+
+h1 { font-size: var(--t-h1); font-weight: 600; }
+h2 { font-size: var(--t-h2); }
+h3 { font-size: var(--t-h3); font-weight: 600; letter-spacing: -0.01em; }
+h4 { font-size: var(--t-h4); letter-spacing: -0.005em; }
+
+.display {
+  font-family: var(--font-display);
+  font-size: var(--t-display);
+  font-weight: 400;
+  font-style: italic;
+  line-height: 0.95;
+  letter-spacing: -0.035em;
+  color: var(--paper);
+}
+
+.display em {
+  font-style: italic;
+  color: var(--amber);
+}
+
+.lead {
+  font-size: var(--t-lead);
+  line-height: 1.55;
+  color: var(--paper-soft);
+  letter-spacing: -0.005em;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--paper-mute);
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 32px;
+  height: 1px;
+  background: var(--paper-mute);
+  vertical-align: middle;
+}
+
+.section-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--amber);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* Container */
+.container {
+  max-width: var(--max-w);
+  margin: 0 auto;
+  padding: 0 var(--gap-5);
+}
+
+@media (min-width: 1024px) {
+  .container { padding: 0 var(--gap-6); }
+}
+
+/* Helpers */
+.text-soft { color: var(--paper-soft); }
+.text-mute { color: var(--paper-mute); }
+.text-amber { color: var(--amber); }
+.text-crimson { color: var(--crimson); }
+
+.italic { font-style: italic; }
+.serif  { font-family: var(--font-display); }
+.mono   { font-family: var(--font-mono); }
+
+/* Hairline horizontal - separador editorial */
+.hairline {
+  height: 1px;
+  background: var(--ink-4);
+  border: none;
+  margin: var(--gap-5) 0;
+}
+
+.hairline-amber {
+  height: 1px;
+  background: var(--amber);
+  width: 48px;
+  border: none;
+}
+
+/* Scroll global escuro */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--ink-1); }
+::-webkit-scrollbar-thumb { background: var(--ink-5); border-radius: var(--r-pill); }
+::-webkit-scrollbar-thumb:hover { background: var(--amber-deep); }
+
+/* Selection warm */
+::selection { background: var(--amber); color: var(--ink-0); }
+
+/* Foco acessível, warm */
+:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+}

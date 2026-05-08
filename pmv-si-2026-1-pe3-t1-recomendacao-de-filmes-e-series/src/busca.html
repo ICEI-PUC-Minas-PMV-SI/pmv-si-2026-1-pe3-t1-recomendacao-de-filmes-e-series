@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buscar | CineMatch</title>
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body>
+
+<main>
+  <div class="container">
+    <div class="page" id="page"></div>
+  </div>
+</main>
+
+<script src="js/data.js"></script>
+<script src="js/state.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/nav.js"></script>
+<script>
+  Nav.mount('busca');
+
+  const initialQuery = UI.qs('q') || '';
+  const _TITLES = window.CINEMATCH_DATA.TITLES;
+  const _GENRES = window.CINEMATCH_DATA.GENRES;
+
+  // Estado dos filtros
+  const filters = {
+    q: initialQuery,
+    types: [],          // ['filme', 'série']
+    genres: [],
+    yearMin: '',
+    yearMax: '',
+    ratingMin: 0
+  };
+
+  document.getElementById('page').innerHTML = `
+    <header class="page-header">
+      <div class="page-greeting">
+        <span class="eyebrow">Catálogo  ·  Pesquisa avançada</span>
+        <h1 class="page-title-display"><em>Encontre</em><br>algo bom.</h1>
+      </div>
+    </header>
+
+    <div class="filter-layout">
+
+      <!-- Sidebar de filtros -->
+      <aside class="filter-sidebar">
+        <div class="filter-group">
+          <div class="filter-group-title">Busca</div>
+          <input type="text" id="searchInput" placeholder="Título ou palavra-chave"
+            value="${UI.escape(initialQuery)}"
+            style="width:100%;padding:10px 14px;background:var(--ink-2);border:1px solid var(--ink-4);border-radius:var(--r-sm);color:var(--paper);font-family:var(--font-body);font-size:13px;">
+        </div>
+
+        <div class="filter-group">
+          <div class="filter-group-title">Tipo</div>
+          ${['filme', 'série'].map(t => `
+            <label class="filter-checkbox">
+              <input type="checkbox" data-type="${t}">
+              ${UI.cap(t)}
+            </label>
+          `).join('')}
+        </div>
+
+        <div class="filter-group">
+          <div class="filter-group-title">Gênero</div>
+          ${_GENRES.map(g => `
+            <label class="filter-checkbox">
+              <input type="checkbox" data-genre="${g}">
+              ${UI.cap(g)}
+            </label>
+          `).join('')}
+        </div>
+
+        <div class="filter-group">
+          <div class="filter-group-title">Ano</div>
+          <div class="filter-range">
+            <input type="number" id="yearMin" placeholder="De" min="1950" max="2030">
+            <input type="number" id="yearMax" placeholder="Até" min="1950" max="2030">
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <div class="filter-group-title">Nota mínima</div>
+          <input type="range" id="ratingMin" min="0" max="5" step="0.5" value="0"
+            style="width:100%;accent-color:var(--amber);">
+          <div class="filter-help" style="font-family:var(--font-mono);font-size:11px;color:var(--paper-mute);text-transform:uppercase;letter-spacing:0.12em;margin-top:4px;">
+            <span id="ratingMinDisplay">qualquer nota</span>
+          </div>
+        </div>
+
+        <button class="btn btn-secondary btn-block btn-sm" id="clearBtn">Limpar filtros</button>
+      </aside>
+
+      <!-- Resultados -->
+      <section>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:var(--gap-5);padding-bottom:var(--gap-3);border-bottom:1px solid var(--ink-4);">
+          <span class="section-num" id="resultsCount">0 títulos</span>
+          <span style="font-family:var(--font-mono);font-size:11px;color:var(--paper-mute);text-transform:uppercase;letter-spacing:0.12em;">
+            Ordenar por: <strong style="color:var(--amber);">relevância</strong>
+          </span>
+        </div>
+        <div class="grid-titles" id="results"></div>
+      </section>
+    </div>
+  `;
+
+  function applyFilters() {
+    const q = filters.q.toLowerCase();
+    const result = _TITLES.filter(t => {
+      // Texto
+      if (q && !(t.title.toLowerCase().includes(q) || t.original.toLowerCase().includes(q))) return false;
+      // Tipos
+      if (filters.types.length && !filters.types.includes(t.type)) return false;
+      // Gêneros (qualquer)
+      if (filters.genres.length && !t.genres.some(g => filters.genres.includes(g))) return false;
+      // Ano
+      if (filters.yearMin && t.year < Number(filters.yearMin)) return false;
+      if (filters.yearMax && t.year > Number(filters.yearMax)) return false;
+      // Rating
+      if (t.avgRating < filters.ratingMin) return false;
+      return true;
+    });
+
+    document.getElementById('resultsCount').textContent =
+      `${result.length} ${result.length === 1 ? 'título' : 'títulos'}`;
+    UI.renderGrid(document.getElementById('results'), result, 'Nenhum resultado.\nTente outras combinações de filtro.');
+  }
+
+  // Listeners
+  const searchInput = document.getElementById('searchInput');
+  searchInput.addEventListener('input', (e) => {
+    filters.q = e.target.value;
+    applyFilters();
+  });
+
+  document.querySelectorAll('[data-type]').forEach(el => {
+    el.addEventListener('change', () => {
+      filters.types = Array.from(document.querySelectorAll('[data-type]:checked')).map(x => x.dataset.type);
+      applyFilters();
+    });
+  });
+
+  document.querySelectorAll('[data-genre]').forEach(el => {
+    el.addEventListener('change', () => {
+      filters.genres = Array.from(document.querySelectorAll('[data-genre]:checked')).map(x => x.dataset.genre);
+      applyFilters();
+    });
+  });
+
+  document.getElementById('yearMin').addEventListener('input', (e) => { filters.yearMin = e.target.value; applyFilters(); });
+  document.getElementById('yearMax').addEventListener('input', (e) => { filters.yearMax = e.target.value; applyFilters(); });
+
+  const ratingSlider = document.getElementById('ratingMin');
+  const ratingDisplay = document.getElementById('ratingMinDisplay');
+  ratingSlider.addEventListener('input', (e) => {
+    filters.ratingMin = Number(e.target.value);
+    ratingDisplay.textContent = filters.ratingMin === 0
+      ? 'qualquer nota'
+      : `≥ ${filters.ratingMin.toFixed(1)} ★`;
+    applyFilters();
+  });
+
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    document.querySelectorAll('.filter-sidebar input[type=checkbox]').forEach(c => c.checked = false);
+    document.querySelectorAll('.filter-sidebar input[type=number]').forEach(i => i.value = '');
+    ratingSlider.value = 0;
+    searchInput.value = '';
+    Object.assign(filters, { q: '', types: [], genres: [], yearMin: '', yearMax: '', ratingMin: 0 });
+    ratingDisplay.textContent = 'qualquer nota';
+    applyFilters();
+  });
+
+  // Render inicial
+  applyFilters();
+</script>
+</body>
+</html>
